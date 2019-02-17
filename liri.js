@@ -15,20 +15,20 @@ var inputs = input[3];
 
 switch (action) {
     case "concert-this":
-    getBands(inputs);
-    break; 
+        getBands(inputs);
+        break;
 
     case "spotify-this-song":
-    spotify(inputs);
-    break; 
+        spotify(inputs);
+        break;
 
     case "movie-this":
-    movie(inputs);
-    break;
+        movie(inputs);
+        break;
 
     case "do-what-it-says":
-    doit();
-    break;
+        doIt();
+        break;
 };
 
 
@@ -37,81 +37,85 @@ switch (action) {
 function getBands(inputs) {
     // var artist = value; //make sure that keys.bands.id works! 
     axios.get("https://rest.bandsintown.com/artists/" + inputs + "/events?app_id=" + keys.bands.id)
-      .then(function (response) {
-        console.log("Name of the venue:", response.data[0].venue.name);
-        console.log("Venue location:", response.data[0].venue.city);
-        var eventDate = moment(response.data[0].datetime).format('MM/DD/YYYY');
-        console.log("Date of the Event:", eventDate);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
+        .then(function (response) {
+            console.log("Name of the venue:", response.data[0].venue.name);
+            console.log("Venue location:", response.data[0].venue.city);
+            var eventDate = moment(response.data[0].datetime).format('MM/DD/YYYY');
+            console.log("Date of the Event:", eventDate);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
 
-  function spotify(inputs) {
+function spotify(inputs) {
     var spotify = new Spotify(keys.spotify);
-        if(!inputs) {
-            inputs ='Bethel Music';
+    if (!inputs) {
+        inputs = 'Bethel Music';
+    }
+    spotify.search({
+        type: 'track',
+        query: inputs
+    }, function (err, data) {
+        if (err) {
+            console.log('Oh no, an error occurred:' + err);
+            return;
         }
-        spotify.search({ type: 'track', query: inputs}, function(err,data) {
-            if (err) {
-                console.log('Oh no, an error occurred:' + err);
-                return;
-            }
         var songInfo = data.tracks.items;
-	    console.log("Artist(s): " + songInfo[0].artists[0].name);
+        console.log("Artist(s): " + songInfo[0].artists[0].name);
         console.log("Song Name: " + songInfo[0].name);
         console.log("Preview Link: " + songInfo[0].preview_url);
-	    console.log("Album: " + songInfo[0].album.name);
-        });
-  };
+        console.log("Album: " + songInfo[0].album.name);
+    });
+};
 
 
-    function movie(inputs) {
-        
-        axios.get("http://www.omdbpapi.com/?t=" + inputs + "&y=&plot=short&tomatoes=true&apikey=" + keys.omdb.id)
-            .then(function(response) {
+function movie(inputs) {
+
+    axios.get("http://www.omdbpapi.com/?t=" + inputs + "&y=&plot=short&tomatoes=true&apikey=" + keys.omdb.id)
+        .then(function (response) {
 
             var queryUrl = "http://www.omdbapi.com/?t=" + inputs + "&y=&plot=short&apikey=trilogy";
 
-            request(queryUrl, function(error, response, body) {
-            if (!inputs){
-                inputs = "Guardians of the Galaxy";
-            }
-            var body = response.data;
+            request(queryUrl, function (error, response, body) {
+                if (!inputs) {
+                    inputs = "Guardians of the Galaxy";
+                }
+                var body = response.data;
 
-            if (!error && response.statusCode === 200) {
-                console.log("Title: " + JSON.parse(body).Title);
-                console.log("Release Year: " + JSON.parse(body).Year);
-                console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
-                console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
-                console.log("Country: " + JSON.parse(body).Country);
-                console.log("Language: " + JSON.parse(body).Language);
-                console.log("Plot: " + JSON.parse(body).Plot);
-                console.log("Actors: " + JSON.parse(body).Actors);  
-            } 
+                if (!error && response.statusCode === 200) {
+                    console.log("Title: " + JSON.parse(body).Title);
+                    console.log("Release Year: " + JSON.parse(body).Year);
+                    console.log("IMDB Rating: " + JSON.parse(body).imdbRating);
+                    console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+                    console.log("Country: " + JSON.parse(body).Country);
+                    console.log("Language: " + JSON.parse(body).Language);
+                    console.log("Plot: " + JSON.parse(body).Plot);
+                    console.log("Actors: " + JSON.parse(body).Actors);
+                }
             })
-            });
+        });
 
-    function doit() {
-        fs.readFile('random.txt', "utf8", function(error, data){
-    
+    function doIt() {
+        fs.readFile('random.txt', "utf8", function (error, data) {
+
             if (error) {
                 return console.log(error);
-              }
-    
+            }
+
             // Then split it by commas (to make it more readable)
             var dataArr = data.split(",");
-    
+
             // Each command is represented. Because of the format in the txt file, remove the quotes to run these commands. 
             if (dataArr[0] === "spotify-this-song") {
                 var songcheck = dataArr[1].slice(1, -1);
                 spotify(songcheck);
-            } else if(dataArr[0] === "movie-this") {
+            } else if (dataArr[0] === "movie-this") {
                 var movie_name = dataArr[1].slice(1, -1);
                 movie(movie_name);
-            } 
-            
-          });
-    
-            }};
+            }
+
+        });
+
+    }
+};
