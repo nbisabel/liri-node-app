@@ -21,5 +21,5 @@
 
 ###Snapshots of Terminal
 
-![alt text](liri-node-app/images/IMG_4347.HEIC)
-![alt text](liri-node-app/images/IMG_4348.HEIC)
+![](images/IMG_4347.HEIC)
+![](images/IMG_4348.HEIC)
