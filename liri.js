@@ -5,6 +5,7 @@ var request = require('request');
 var Spotify = require('node-spotify-api');
 var fs = require('fs');
 var axios = require("axios");
+var moment = require("moment");
 
 var input = process.argv;
 var action = input[2];
@@ -67,11 +68,18 @@ function getBands(inputs) {
 
 
     function movie(inputs) {
-        axios.get("http://www.omdbpapi.com/?t=" + inputs + "&y=&plot=short&apikey=" + keys.movies.id)
+        
+        axios.get("http://www.omdbpapi.com/?t=" + inputs + "&y=&plot=short&tomatoes=true&apikey=" + keys.omdb.id)
             .then(function(response) {
+
+            var queryUrl = "http://www.omdbapi.com/?t=" + inputs + "&y=&plot=short&apikey=trilogy";
+
+            request(queryUrl, function(error, response, body) {
             if (!inputs){
                 inputs = "Guardians of the Galaxy";
             }
+            var body = response.data;
+
             if (!error && response.statusCode === 200) {
                 console.log("Title: " + JSON.parse(body).Title);
                 console.log("Release Year: " + JSON.parse(body).Year);
@@ -83,7 +91,7 @@ function getBands(inputs) {
                 console.log("Actors: " + JSON.parse(body).Actors);  
             } 
             })
-    }
+            });
 
     function doit() {
         fs.readFile('random.txt', "utf8", function(error, data){
@@ -99,9 +107,6 @@ function getBands(inputs) {
             if (dataArr[0] === "spotify-this-song") {
                 var songcheck = dataArr[1].slice(1, -1);
                 spotify(songcheck);
-            } else if (dataArr[0] === "my-tweets") {
-                var tweetname = dataArr[1].slice(1, -1);
-                twitter(tweetname);
             } else if(dataArr[0] === "movie-this") {
                 var movie_name = dataArr[1].slice(1, -1);
                 movie(movie_name);
@@ -109,4 +114,4 @@ function getBands(inputs) {
             
           });
     
-    };
+            }};
