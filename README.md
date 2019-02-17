@@ -20,6 +20,5 @@
 
 
 ###Snapshots of Terminal
-
-![](images/IMG_4347.HEIC)
-![](images/IMG_4348.HEIC)
+<img src="images/IMG_4347.HEIC">
+<img src="images/IMG_4348.HEIC">
